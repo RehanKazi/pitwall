@@ -1,26 +1,99 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Pitwall theme — deep navy, dithered.
+ * The whole UI uses the `navy` scale (bg-navy-950, text-navy-300, …).
+ */
+@theme {
+  --color-navy-50: #eef2fb;
+  --color-navy-100: #dde4f4;
+  --color-navy-200: #bcc8e6;
+  --color-navy-300: #94a5cf;
+  --color-navy-400: #7488ba;
+  --color-navy-500: #5a6d9f;
+  --color-navy-600: #3e4d79;
+  --color-navy-700: #2b385d;
+  --color-navy-800: #1d2846;
+  --color-navy-900: #131c35;
+  --color-navy-950: #0b1329; /* page background */
+  --color-navy-975: #070d1e; /* panels, cards, sidebar */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-navy-950);
+  color: var(--color-navy-100);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/*
+ * Dithered glow behind the app. The PNG is tiny (one pixel per dither dot,
+ * made by scripts/make-dither.py) and scaled up with pixelated rendering so
+ * the dots stay crisp instead of blurring into a smooth gradient.
+ *
+ * The glow lives on a ::before layer because image-rendering is inherited:
+ * set on the wrapper itself it would pixelate every photo and logo inside.
+ */
+.dither-bg {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--color-navy-950);
+}
+
+.dither-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("/dither-glow.png");
+  background-size: 1920px 1200px;
+  background-position: top right;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Fine dot texture laid over panels so they read as dithered too. */
+.dither-panel {
+  background-color: var(--color-navy-975);
+  background-image: radial-gradient(
+    rgb(148 165 207 / 0.07) 0.5px,
+    transparent 0.6px
+  );
+  background-size: 3px 3px;
+}
+
+/*
+ * The same fine dot texture with no background colour of its own, for
+ * laying over something coloured (e.g. a driver card's team gradient).
+ */
+.dither-dots {
+  background-image: radial-gradient(
+    rgb(255 255 255 / 0.09) 0.5px,
+    transparent 0.6px
+  );
+  background-size: 3px 3px;
+}
+
+/*
+ * Text drawn as a dot pattern: the dots are a background clipped to the
+ * glyph shapes. Meant for large display type (e.g. a card's race number).
+ */
+.dither-text {
+  color: transparent;
+  background-image: radial-gradient(
+    rgb(255 255 255 / 0.3) 1.1px,
+    transparent 1.35px
+  );
+  background-size: 4px 4px;
+  -webkit-background-clip: text;
+  background-clip: text;
 }
