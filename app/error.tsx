@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import Logo from "./components/Logo";
-import PageHeader from "./components/PageHeader";
 
 /**
  * Shown in place of a page that crashed while rendering (the sidebar stays).
@@ -29,7 +28,6 @@ export default function Error({
 
   return (
     <main className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto">
-      <PageHeader title="Error" />
       <div className="flex flex-1 items-center justify-center p-6">
         <div className="flex max-w-md flex-col items-center rounded-2xl border border-navy-800 dither-panel px-8 py-10 text-center">
           <Logo className="h-14 w-14 opacity-90 grayscale-[35%]" />

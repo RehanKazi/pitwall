@@ -30,7 +30,7 @@ export default function ChampionshipView({
 
   return (
     <>
-      <div className="mt-6 flex justify-end">
+      <div className="flex justify-end">
         <div
           role="group"
           aria-label="Championship"

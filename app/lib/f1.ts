@@ -209,6 +209,9 @@ const OPENF1_NAMES: Record<string, SessionName> = {
   "Practice 1": "FP1",
   "Practice 2": "FP2",
   "Practice 3": "FP3",
+  "Sprint Qualifying": "Sprint Qualifying",
+  "Sprint Shootout": "Sprint Qualifying", // 2023's name for it
+  Sprint: "Sprint",
   Qualifying: "Qualifying",
   Race: "Race",
 };
@@ -387,10 +390,13 @@ export async function getSeason({ weekends = false } = {}): Promise<Race[]> {
       const race: Race = { ...weekend };
       if (weekends && weekend.sessions.length) {
         const exact = weekendSessions(weekend, openF1Sessions);
-        race.sessions = weekend.sessions.map((s) => {
-          const match = exact.get(s.name);
-          return match ? { ...s, start: new Date(match.date_start).toISOString().replace(".000Z", "Z") } : s;
-        });
+        // OpenF1's own list when it has this weekend (exact times, and the
+        // sprint sessions on sprint weekends); otherwise the static timetable.
+        if (exact.size) {
+          race.sessions = [...exact]
+            .map(([name, s]) => ({ name, start: new Date(s.date_start).toISOString().replace(".000Z", "Z") }))
+            .sort((a, b) => ms(a.start) - ms(b.start));
+        }
         race.sessionResults = await getSessionResults(weekend.round);
       }
       const classification = races[weekend.round];

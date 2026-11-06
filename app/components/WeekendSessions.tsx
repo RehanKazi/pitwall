@@ -150,7 +150,7 @@ export default function WeekendSessions({
             </h4>
             <ResultsTable
               nameHeader="Driver"
-              valueHeader={shown.session.name === "Race" ? "Time" : "Best Lap"}
+              valueHeader={shown.session.name === "Race" || shown.session.name === "Sprint" ? "Time" : "Best Lap"}
               rows={rows}
             />
           </>

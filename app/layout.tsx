@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Sidebar, { MobileHeader, MobileNav, SiteNotice } from "./components/Sidebar";
+import Sidebar, { MobileHeader, MobileNav } from "./components/Sidebar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -56,7 +56,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Sidebar />
           <MobileHeader />
           {children}
-          <SiteNotice className="border-t border-navy-800 px-4 py-6 lg:hidden" />
           <MobileNav />
         </div>
       </body>

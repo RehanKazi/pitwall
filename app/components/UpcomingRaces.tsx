@@ -11,6 +11,7 @@ import {
 } from "../data/schedule";
 import LiveDot from "./LiveDot";
 import RaceClassification from "./RaceClassification";
+import WeekendSchedule from "./WeekendSchedule";
 import TrackMap, { LAP_SPEEDUP, type LapMarker, type Track } from "./TrackMap";
 import WeekendSessions, {
   driverInfo,
@@ -196,7 +197,7 @@ function RacePreview({
               </span>
             )}
             Round {race.round} · {formatRange(race.start, race.end)}
-            {race.sprint && (
+            {(race.sprint || race.sessions.some((s) => s.name === "Sprint")) && (
               <span className="rounded-full bg-navy-800 px-2 py-0.5 text-[10px] text-navy-200">
                 Sprint
               </span>
@@ -440,12 +441,18 @@ export default function UpcomingRaces({ races }: { races: RaceWithTrack[] }) {
           lap={selected === current ? lap : null}
           lapCaption={selected === current ? lapCaption : null}
         />
-        {selected.classification && (
+        {/* Finished: the results. Not run yet: the session times — except for a
+            live weekend, whose timetable (with results) is shown below instead. */}
+        {selected.classification ? (
           <RaceClassification
             key={selected.round}
             race={selected.classification}
             sprint={selected.sprint}
           />
+        ) : (
+          !(selected === current && currentIsLive) && (
+            <WeekendSchedule race={selected} now={now} />
+          )
         )}
       </div>
 

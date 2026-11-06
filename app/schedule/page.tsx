@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import PageHeader from "../components/PageHeader";
 import ScheduleCard from "../components/ScheduleCard";
 import ScrollToCurrentRace from "../components/ScrollToCurrentRace";
 import { raceEndMs } from "../data/schedule";
@@ -14,25 +13,15 @@ export default async function SchedulePage() {
     race,
     track: loadTrack(race.trackImage),
   }));
-  const completed = season.filter((r) => r.result).length;
   const nextRound = season.find((r) => !r.result)?.round;
   // The page picks the current race from the visitor's clock, like the home page.
   const ends = season.map((r) => ({ round: r.round, end: raceEndMs(r) }));
 
   return (
     <main className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto">
-      <PageHeader title="Schedule" />
       <ScrollToCurrentRace ends={ends} />
       <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-navy-50">
-          2026 Calendar
-        </h1>
-        <p className="mt-1 text-sm text-navy-200">
-          {season.length} rounds · {completed} completed,{" "}
-          {season.length - completed} to go. Finished races show their podium.
-        </p>
-
-        <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {races.map(({ race, track }) => (
             <ScheduleCard
               key={race.round}

@@ -1,7 +1,14 @@
 import type { ClassifiedRow } from "./raceResults";
 import type { teams } from "./standings";
 
-export type SessionName = "FP1" | "FP2" | "FP3" | "Qualifying" | "Race";
+export type SessionName =
+  | "FP1"
+  | "FP2"
+  | "FP3"
+  | "Sprint Qualifying"
+  | "Sprint"
+  | "Qualifying"
+  | "Race";
 
 export type Session = {
   name: SessionName;
@@ -66,6 +73,8 @@ export const sessionMinutes: Record<SessionName, number> = {
   FP1: 60,
   FP2: 60,
   FP3: 60,
+  "Sprint Qualifying": 45,
+  Sprint: 60,
   Qualifying: 60,
   Race: 120,
 };

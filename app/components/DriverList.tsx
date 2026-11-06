@@ -56,7 +56,7 @@ export default function DriverList({
     });
 
   return (
-    <ol className="mt-8 flex flex-col gap-5">
+    <ol className="flex flex-col gap-5">
       {drivers.map((d, i) => {
         const slug = driverSlug(d.name);
         return (

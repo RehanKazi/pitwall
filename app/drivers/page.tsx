@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import DriverList from "../components/DriverList";
-import PageHeader from "../components/PageHeader";
 import { buildPointsEvolution } from "../data/championship";
 import { buildDriverProfiles, constructorOrder2025 } from "../data/driverProfiles";
 import { driverStandings } from "../data/standings";
@@ -21,17 +20,7 @@ export default async function DriversPage() {
 
   return (
     <main className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto">
-      <PageHeader title="Drivers" />
       <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-navy-50">
-          2026 Drivers
-        </h1>
-        <p className="mt-1 text-sm text-navy-200">
-          Ordered by their team&apos;s finish in the 2025 constructors&apos;
-          championship. Click a driver for season and career stats
-          {lastRound ? ` — up to round ${lastRound.round}, ${lastRound.name}` : ""}.
-        </p>
-
         <DriverList
           drivers={drivers}
           profiles={profiles}

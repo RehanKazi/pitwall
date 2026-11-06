@@ -58,33 +58,7 @@ function useIsActive() {
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-/** Unofficial-site and trademark notice, plus data credits. */
-export function SiteNotice({ className = "" }: { className?: string }) {
-  return (
-    <footer className={`space-y-2 text-[11px] leading-relaxed text-navy-500 ${className}`}>
-      <p>
-        Pitwall is an unofficial fan site and is not associated in any way with
-        the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE
-        WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of
-        Formula One Licensing B.V.
-      </p>
-      <p>
-        Team logos, names and driver images belong to their respective owners.
-        Data from{" "}
-        <a href="https://github.com/jolpica/jolpica-f1" className="underline hover:text-navy-300">
-          Jolpica-F1
-        </a>{" "}
-        and{" "}
-        <a href="https://openf1.org" className="underline hover:text-navy-300">
-          OpenF1
-        </a>
-        .
-      </p>
-    </footer>
-  );
-}
-
-/** Desktop (lg and up): full-height sidebar with the menu and the site notice. */
+/** Desktop (lg and up): full-height sidebar with the menu. */
 export default function Sidebar() {
   const isActive = useIsActive();
 
@@ -117,7 +91,6 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <SiteNotice className="mt-auto px-3 pt-6" />
     </aside>
   );
 }

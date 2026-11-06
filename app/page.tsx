@@ -1,5 +1,4 @@
 import type { ResultsRow } from "./components/ResultsTable";
-import PageHeader from "./components/PageHeader";
 import LastRaceDrawer from "./components/LastRaceDrawer";
 import LastRacePanel from "./components/LastRacePanel";
 import UpcomingRaces from "./components/UpcomingRaces";
@@ -51,7 +50,6 @@ export default async function Home() {
     // The last race sits beside the races from xl up; below that it's in a slide-out drawer.
     <div className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto xl:flex-row xl:overflow-hidden">
       <main className="flex min-w-0 flex-1 flex-col xl:overflow-y-auto">
-        <PageHeader title="Home" />
         <div className="flex-1 p-4 sm:p-6">
           <UpcomingRaces races={racesWithTracks} />
         </div>
