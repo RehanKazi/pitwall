@@ -11,7 +11,7 @@ const bornFormat = new Intl.DateTimeFormat("en-GB", {
 });
 
 /** One career-stat tile, e.g. "208 / Podiums". */
-function Stat({ value, label }: { value: number; label: string }) {
+export function Stat({ value, label }: { value: number; label: string }) {
   return (
     <span className="flex w-20 flex-col items-center">
       <span className="text-4xl font-black leading-none tabular-nums text-white">
@@ -28,7 +28,7 @@ function Stat({ value, label }: { value: number; label: string }) {
  * White version of the team logo — the colour one would vanish on its own
  * team colour (e.g. orange McLaren on orange).
  */
-function TeamLogo({ team }: { team: Team }) {
+export function TeamLogo({ team }: { team: Team }) {
   return (
     <Image
       src={team.logoWhite}
@@ -41,10 +41,10 @@ function TeamLogo({ team }: { team: Team }) {
   );
 }
 
-const numberFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
+export const numberFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
 
 /** One stat in the expanded panel. */
-function DetailStat({
+export function DetailStat({
   label,
   value,
   accent,
@@ -69,7 +69,7 @@ function DetailStat({
   );
 }
 
-function StatsSection({
+export function StatsSection({
   title,
   subtitle,
   color,

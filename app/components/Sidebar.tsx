@@ -30,6 +30,14 @@ const DriversIcon = () => (
   </svg>
 );
 
+const TeamsIcon = () => (
+  <svg {...iconProps}>
+    <circle cx="9" cy="8" r="3.5" />
+    <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
+    <path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5" />
+  </svg>
+);
+
 const ScheduleIcon = () => (
   <svg {...iconProps}>
     <rect x="3" y="5" width="18" height="16" rx="2" />
@@ -45,11 +53,13 @@ const ChampionshipIcon = () => (
   </svg>
 );
 
-const navItems: { href: string; label: string; icon: ReactNode }[] = [
+/** `short` is used in the phone tab bar, where five tabs share a 320–360px screen. */
+const navItems: { href: string; label: string; short?: string; icon: ReactNode }[] = [
   { href: "/", label: "Home", icon: <HomeIcon /> },
   { href: "/drivers", label: "Drivers", icon: <DriversIcon /> },
+  { href: "/teams", label: "Teams", icon: <TeamsIcon /> },
   { href: "/schedule", label: "Schedule", icon: <ScheduleIcon /> },
-  { href: "/championship", label: "Championship", icon: <ChampionshipIcon /> },
+  { href: "/championship", label: "Championship", short: "Standings", icon: <ChampionshipIcon /> },
 ];
 
 function useIsActive() {
@@ -120,7 +130,7 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-navy-800 bg-navy-975/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-navy-800 bg-navy-975/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
     >
       {navItems.map((item) => {
         const active = isActive(item.href);
@@ -140,7 +150,7 @@ export function MobileNav() {
             >
               {item.icon}
             </span>
-            {item.label}
+            {item.short ?? item.label}
           </Link>
         );
       })}
