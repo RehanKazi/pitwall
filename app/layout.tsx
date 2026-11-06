@@ -13,9 +13,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/**
+ * Absolute base for the social preview image URL. Set NEXT_PUBLIC_SITE_URL to
+ * your domain; on Vercel the production URL is used automatically.
+ */
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
+
+const description = "Formula 1 standings, results and race weekends";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Pitwall",
-  description: "Formula 1 stats, standings and race weekends",
+  description,
+  // The image itself comes from app/opengraph-image.png.
+  openGraph: { siteName: "Pitwall", title: "Pitwall", description, type: "website" },
+  twitter: { card: "summary_large_image", title: "Pitwall", description },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

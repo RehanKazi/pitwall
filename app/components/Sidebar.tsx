@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import Logo from "./Logo";
 
 const iconProps = {
   "aria-hidden": true,
@@ -55,11 +56,9 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r border-navy-800 dither-panel px-3 py-4">
+    <aside className="flex w-64 shrink-0 flex-col overflow-y-auto border-r border-navy-800 dither-panel px-3 py-4">
       <Link href="/" className="flex items-center gap-3 px-2 pb-6">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-600 text-lg font-bold italic text-white">
-          P
-        </div>
+        <Logo className="h-9 w-9 shrink-0" />
         <span className="text-lg font-semibold tracking-tight text-navy-50">Pitwall</span>
       </Link>
 
@@ -87,6 +86,27 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      <footer className="mt-auto space-y-2 px-3 pt-6 text-[11px] leading-relaxed text-navy-500">
+        <p>
+          Pitwall is an unofficial fan site and is not associated in any way
+          with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA
+          ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks
+          of Formula One Licensing B.V.
+        </p>
+        <p>
+          Team logos, names and driver images belong to their respective
+          owners. Data from{" "}
+          <a href="https://github.com/jolpica/jolpica-f1" className="underline hover:text-navy-300">
+            Jolpica-F1
+          </a>{" "}
+          and{" "}
+          <a href="https://openf1.org" className="underline hover:text-navy-300">
+            OpenF1
+          </a>
+          .
+        </p>
+      </footer>
     </aside>
   );
 }
