@@ -52,7 +52,7 @@ export default function ChampionshipView({
         </div>
       </div>
 
-      <section className="mt-3 rounded-xl border border-navy-800 p-6 dither-panel">
+      <section className="mt-3 rounded-xl border border-navy-800 p-4 dither-panel sm:p-6">
         <h2 className="mb-5 text-lg font-semibold tracking-tight text-navy-50">
           {view.noun} Points Evolution
         </h2>
@@ -60,7 +60,7 @@ export default function ChampionshipView({
         <PointsEvolutionChart key={kind} kind={kind} rounds={rounds} series={series} />
       </section>
 
-      <section className="mt-6 rounded-xl border border-navy-800 p-6 dither-panel">
+      <section className="mt-6 rounded-xl border border-navy-800 p-4 dither-panel sm:p-6">
         <h2 className="text-lg font-semibold tracking-tight text-navy-50">
           {view.noun} Ranking Evolution
         </h2>

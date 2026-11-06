@@ -20,9 +20,9 @@ export default async function DriversPage() {
   const lastRound = rounds.at(-1);
 
   return (
-    <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+    <main className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto">
       <PageHeader title="Drivers" />
-      <div className="mx-auto w-full max-w-5xl px-6 py-8">
+      <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="text-2xl font-semibold tracking-tight text-navy-50">
           2026 Drivers
         </h1>
@@ -32,7 +32,15 @@ export default async function DriversPage() {
           {lastRound ? ` — up to round ${lastRound.round}, ${lastRound.name}` : ""}.
         </p>
 
-        <DriverList drivers={drivers} profiles={profiles} />
+        <DriverList
+          drivers={drivers}
+          profiles={profiles}
+          asOf={
+            lastRound
+              ? `After round ${lastRound.round} · ${lastRound.name.replace("Grand Prix", "GP")}`
+              : undefined
+          }
+        />
       </div>
     </main>
   );

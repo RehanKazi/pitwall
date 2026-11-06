@@ -84,14 +84,15 @@ export default function WeekendSessions({
 
   return (
     <section className="mt-6 overflow-hidden rounded-xl border border-navy-800 dither-panel">
-      <div className="flex items-center gap-2 px-6 pb-4 pt-5">
+      <div className="flex items-center gap-2 px-4 pb-4 pt-5 sm:px-6">
         <LiveDot />
         <h3 className="text-lg font-semibold tracking-tight text-navy-50">
           Weekend Timetable
         </h3>
       </div>
 
-      <ol className="grid grid-cols-5 gap-2 px-6 pb-5">
+      {/* Phones: sessions keep a readable width and the row scrolls sideways. */}
+      <ol className="grid auto-cols-[minmax(6.5rem,1fr)] grid-flow-col gap-2 overflow-x-auto px-4 pb-5 [scrollbar-width:none] sm:px-6 [&::-webkit-scrollbar]:hidden">
         {race.sessions.map((s) => {
           const status = sessionStatus(s, now);
           const canPick = selectable.includes(s);
@@ -154,7 +155,7 @@ export default function WeekendSessions({
             />
           </>
         ) : (
-          <p className="px-6 py-5 text-sm text-navy-400">
+          <p className="px-4 py-5 text-sm text-navy-400 sm:px-6">
             No sessions finished yet — results will appear here after FP1.
           </p>
         )}

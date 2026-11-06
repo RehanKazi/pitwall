@@ -24,6 +24,24 @@ export function useWidth<T extends HTMLElement>(fallback: number) {
   return [ref, width] as const;
 }
 
+/** Charts narrower than this (phones) switch to a compact layout. */
+export const COMPACT_WIDTH = 560;
+
+/**
+ * X-axis flags: full size when there's room, smaller on narrow charts, and on
+ * very narrow ones only every nth round (counting back from the latest) so
+ * they never overlap.
+ */
+export function flagAxis(step: number, count: number) {
+  const w = Math.min(20, Math.max(12, step - 3));
+  const every = Math.max(1, Math.ceil((w + 3) / Math.max(step, 1)));
+  return {
+    w,
+    h: Math.round(w * 0.7),
+    shown: (i: number) => (count - 1 - i) % every === 0,
+  };
+}
+
 /** Little line sample for legends — solid or dashed like the chart line. */
 export function Swatch({ color, dashed }: { color: string; dashed: boolean }) {
   return (

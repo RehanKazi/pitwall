@@ -28,7 +28,7 @@ export default function Error({
       : null;
 
   return (
-    <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+    <main className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto">
       <PageHeader title="Error" />
       <div className="flex flex-1 items-center justify-center p-6">
         <div className="flex max-w-md flex-col items-center rounded-2xl border border-navy-800 dither-panel px-8 py-10 text-center">

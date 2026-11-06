@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PageHeader from "../components/PageHeader";
 import ScheduleCard from "../components/ScheduleCard";
+import ScrollToCurrentRace from "../components/ScrollToCurrentRace";
+import { raceEndMs } from "../data/schedule";
 import { loadTrack } from "../data/tracks";
 import { getSeason } from "../lib/f1";
 
@@ -14,11 +16,14 @@ export default async function SchedulePage() {
   }));
   const completed = season.filter((r) => r.result).length;
   const nextRound = season.find((r) => !r.result)?.round;
+  // The page picks the current race from the visitor's clock, like the home page.
+  const ends = season.map((r) => ({ round: r.round, end: raceEndMs(r) }));
 
   return (
-    <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+    <main className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto">
       <PageHeader title="Schedule" />
-      <div className="mx-auto w-full max-w-7xl px-6 py-8">
+      <ScrollToCurrentRace ends={ends} />
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="text-2xl font-semibold tracking-tight text-navy-50">
           2026 Calendar
         </h1>

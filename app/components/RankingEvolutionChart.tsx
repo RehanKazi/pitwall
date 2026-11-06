@@ -3,7 +3,13 @@
 import Image from "next/image";
 import { useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { EvolutionRound, EvolutionSeries } from "../data/championship";
-import { useWidth, type ChampionshipKind } from "./chartParts";
+import {
+  COMPACT_WIDTH,
+  flagAxis,
+  shortLabel,
+  useWidth,
+  type ChampionshipKind,
+} from "./chartParts";
 
 // ---- Geometry ----
 
@@ -11,6 +17,9 @@ const M = { top: 14, bottom: 44, left: 36 };
 /** Right-hand column: each position's label sits level with its row. */
 const LABEL_W = 236;
 const GAP = 18;
+/** Phones: surname + points only. */
+const COMPACT_LABEL_W = 116;
+const COMPACT_GAP = 10;
 
 /** Smooth S-bend between two rounds, like a bump chart. */
 function bumpPath(points: { x: number; y: number }[]) {
@@ -73,11 +82,15 @@ export default function RankingEvolutionChart({
   const row = Math.max(26, Math.min(48, 560 / Math.max(1, n - 1)));
   const plotH = (n - 1) * row;
   const height = M.top + plotH + M.bottom;
-  const plotLeft = M.left + 14;
-  const plotRight = Math.max(plotLeft + 200, width - LABEL_W - GAP);
+  const compact = width < COMPACT_WIDTH;
+  const labelW = compact ? COMPACT_LABEL_W : LABEL_W;
+  const gap = compact ? COMPACT_GAP : GAP;
+  const plotLeft = M.left + (compact ? 4 : 14);
+  const plotRight = Math.max(plotLeft + 120, width - labelW - gap);
   const step = rounds.length > 1 ? (plotRight - plotLeft) / (rounds.length - 1) : 0;
   const xAt = (i: number) => plotLeft + i * step;
   const yAt = (rank: number) => M.top + (rank - 1) * row;
+  const flags = flagAxis(step, rounds.length);
 
   const shownIndex = hoverIndex ?? rounds.length - 1;
   const shownRound = rounds[shownIndex];
@@ -115,7 +128,7 @@ export default function RankingEvolutionChart({
     ? [...series.filter((s) => s.name !== focus), ...series.filter((s) => s.name === focus)]
     : [...series].reverse();
 
-  const labelX = plotRight + GAP;
+  const labelX = plotRight + gap;
 
   return (
     <div
@@ -130,7 +143,7 @@ export default function RankingEvolutionChart({
       <div
         aria-live="polite"
         className="mb-2 ml-auto flex h-5 items-center gap-1.5 text-[11px]"
-        style={{ width: LABEL_W }}
+        style={{ width: compact ? undefined : LABEL_W }}
       >
         {shownRound && (
           <>
@@ -228,14 +241,16 @@ export default function RankingEvolutionChart({
         {/* X axis: a flag per round, dot = sprint weekend */}
         {rounds.map((r, i) => (
           <g key={r.round} opacity={hoverIndex === null || hoverIndex === i ? 1 : 0.45}>
-            <image
-              href={`/flags/${r.countryCode}.png`}
-              x={xAt(i) - 10}
-              y={M.top + plotH + 16}
-              width={20}
-              height={14}
-              preserveAspectRatio="xMidYMid slice"
-            />
+            {(flags.shown(i) || hoverIndex === i) && (
+              <image
+                href={`/flags/${r.countryCode}.png`}
+                x={xAt(i) - flags.w / 2}
+                y={M.top + plotH + 16}
+                width={flags.w}
+                height={flags.h}
+                preserveAspectRatio="xMidYMid slice"
+              />
+            )}
             {r.sprint && <circle cx={xAt(i)} cy={M.top + plotH + 38} r={2} fill="var(--color-navy-300)" />}
           </g>
         ))}
@@ -248,7 +263,9 @@ export default function RankingEvolutionChart({
           height={plotH + row}
           fill="transparent"
           onPointerMove={onMove}
-          onPointerLeave={clearHover}
+          // Touch: a tap picks the round and it stays until you tap elsewhere.
+          onPointerDown={onMove}
+          onPointerLeave={(e) => e.pointerType !== "touch" && clearHover()}
           onClick={() => hoverName && setPinned((p) => (p === hoverName ? null : hoverName))}
           className={hoverName ? "cursor-pointer" : "cursor-crosshair"}
         />
@@ -275,7 +292,7 @@ export default function RankingEvolutionChart({
               <rect
                 x={labelX - 6}
                 y={-row / 2 + 2}
-                width={LABEL_W}
+                width={labelW}
                 height={row - 4}
                 rx={5}
                 fill={active ? "rgb(255 255 255 / 0.08)" : "transparent"}
@@ -295,17 +312,19 @@ export default function RankingEvolutionChart({
                 dy="0.32em"
                 className={`text-xs ${active ? "fill-navy-50 font-semibold" : "fill-navy-200"}`}
               >
-                {s.name}
+                {compact ? shortLabel(s.name, kind) : s.name}
               </text>
               <text
-                x={labelX + LABEL_W - 48}
+                x={labelX + labelW - (compact ? 8 : 48)}
                 dy="0.32em"
                 textAnchor="end"
                 className="fill-navy-50 text-xs font-semibold tabular-nums"
               >
                 {s.cumulative[shownIndex]}
               </text>
-              <Change delta={shownIndex > 0 ? delta : 0} x={labelX + LABEL_W - 14} y={0} />
+              {!compact && (
+                <Change delta={shownIndex > 0 ? delta : 0} x={labelX + LABEL_W - 14} y={0} />
+              )}
             </g>
           );
         })}

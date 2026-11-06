@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
+  raceEndMs,
   sessionMinutes,
   type Session,
   type Race,
@@ -36,12 +37,6 @@ function useNow(): number | null {
 
 const ms = (iso: string) => new Date(iso).getTime();
 const sessionEnd = (s: Session) => ms(s.start) + sessionMinutes[s.name] * 60_000;
-/** When a race weekend is finished: its last session's end, or (for rounds
- *  stored without session times) the day after its final day. */
-const raceEndMs = (race: Race) =>
-  race.sessions.length
-    ? sessionEnd(race.sessions[race.sessions.length - 1])
-    : ms(`${race.end}T00:00:00Z`) + 24 * 3600_000;
 const raceOver = (race: Race, now: number) => raceEndMs(race) <= now;
 
 const dayMonth = new Intl.DateTimeFormat("en-GB", {

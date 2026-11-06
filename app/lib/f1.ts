@@ -304,12 +304,18 @@ function sessionRows(results: OpenF1Result[], drivers: Map<number, OpenF1Driver>
     const durations = Array.isArray(r.duration) ? r.duration : [r.duration];
     const segment = durations.findLastIndex((t) => t != null);
     const gaps = Array.isArray(r.gap_to_leader) ? r.gap_to_leader : [r.gap_to_leader];
-    const time = durations[segment];
+    // No position = not classified (excluded, or OpenF1 hasn't settled it): don't show a time that implies a place.
+    const time = r.position == null ? null : durations[segment];
     rows.push({
       name: onGrid?.name ?? `${d.first_name} ${d.last_name}`,
       team,
       time:
-        r.dsq ? "DSQ" : r.dns ? "DNS" : time != null ? formatSeconds(time) : r.dnf ? "DNF" : "No time",
+        r.dsq ? "DSQ"
+        : r.dns ? "DNS"
+        : time != null ? formatSeconds(time)
+        : r.dnf ? "DNF"
+        : r.position == null ? "NC"
+        : "No time",
       gap: time != null && !r.dsq ? formatGap(gaps[segment]) : undefined,
     });
   }

@@ -11,9 +11,9 @@ export default async function ChampionshipPage() {
   const lastRound = rounds.at(-1);
 
   return (
-    <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+    <main className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto">
       <PageHeader title="Championship" />
-      <div className="w-full px-6 py-8">
+      <div className="w-full px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="text-2xl font-semibold tracking-tight text-navy-50">
           2026 Championship
         </h1>

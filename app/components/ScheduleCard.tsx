@@ -100,9 +100,10 @@ export default function ScheduleCard({
 
   return (
     <article
+      id={`round-${race.round}`}
       // Finished races are focusable so keyboard users can open the results too.
       tabIndex={classification ? 0 : undefined}
-      className={`group relative isolate flex flex-col overflow-hidden rounded-2xl border p-5 dither-panel transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-300 ${
+      className={`group relative isolate flex scroll-mt-20 flex-col overflow-hidden rounded-2xl border p-5 dither-panel transition lg:scroll-mt-6 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-300 ${
         isNext
           ? "border-red-500/50 shadow-lg shadow-red-950/40"
           : past

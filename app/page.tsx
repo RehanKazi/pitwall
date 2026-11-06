@@ -76,14 +76,15 @@ export default async function Home() {
   }));
 
   return (
-    <>
-      <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+    // Standings sit beside the races from xl up; below that they stack underneath.
+    <div className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto xl:flex-row xl:overflow-hidden">
+      <main className="flex min-w-0 flex-1 flex-col xl:overflow-y-auto">
         <PageHeader title="Home" />
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-4 sm:p-6">
           <UpcomingRaces races={racesWithTracks} />
         </div>
       </main>
-      <aside className="w-96 shrink-0 overflow-y-auto border-l border-navy-800 dither-panel">
+      <aside className="shrink-0 border-t border-navy-800 dither-panel xl:w-96 xl:overflow-y-auto xl:border-l xl:border-t-0">
         <StandingsPanel
           constructors={constructors}
           drivers={drivers}
@@ -91,6 +92,6 @@ export default async function Home() {
           lastRace={{ name: last?.name ?? "No races yet", rows: lastRaceRows }}
         />
       </aside>
-    </>
+    </div>
   );
 }

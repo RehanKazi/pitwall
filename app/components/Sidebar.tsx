@@ -52,11 +52,44 @@ const navItems: { href: string; label: string; icon: ReactNode }[] = [
   { href: "/championship", label: "Championship", icon: <ChampionshipIcon /> },
 ];
 
-export default function Sidebar() {
+function useIsActive() {
   const pathname = usePathname();
+  return (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+}
+
+/** Unofficial-site and trademark notice, plus data credits. */
+export function SiteNotice({ className = "" }: { className?: string }) {
+  return (
+    <footer className={`space-y-2 text-[11px] leading-relaxed text-navy-500 ${className}`}>
+      <p>
+        Pitwall is an unofficial fan site and is not associated in any way with
+        the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE
+        WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of
+        Formula One Licensing B.V.
+      </p>
+      <p>
+        Team logos, names and driver images belong to their respective owners.
+        Data from{" "}
+        <a href="https://github.com/jolpica/jolpica-f1" className="underline hover:text-navy-300">
+          Jolpica-F1
+        </a>{" "}
+        and{" "}
+        <a href="https://openf1.org" className="underline hover:text-navy-300">
+          OpenF1
+        </a>
+        .
+      </p>
+    </footer>
+  );
+}
+
+/** Desktop (lg and up): full-height sidebar with the menu and the site notice. */
+export default function Sidebar() {
+  const isActive = useIsActive();
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col overflow-y-auto border-r border-navy-800 dither-panel px-3 py-4">
+    <aside className="hidden w-64 shrink-0 flex-col overflow-y-auto border-r border-navy-800 dither-panel px-3 py-4 lg:flex">
       <Link href="/" className="flex items-center gap-3 px-2 pb-6">
         <Logo className="h-9 w-9 shrink-0" />
         <span className="text-lg font-semibold tracking-tight text-navy-50">Pitwall</span>
@@ -65,10 +98,7 @@ export default function Sidebar() {
       <p className="px-3 pb-2 text-xs font-medium text-navy-500">Menu</p>
       <nav className="flex flex-col gap-0.5">
         {navItems.map((item) => {
-          const active =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const active = isActive(item.href);
           return (
             <Link
               key={item.href}
@@ -87,26 +117,60 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <footer className="mt-auto space-y-2 px-3 pt-6 text-[11px] leading-relaxed text-navy-500">
-        <p>
-          Pitwall is an unofficial fan site and is not associated in any way
-          with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA
-          ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks
-          of Formula One Licensing B.V.
-        </p>
-        <p>
-          Team logos, names and driver images belong to their respective
-          owners. Data from{" "}
-          <a href="https://github.com/jolpica/jolpica-f1" className="underline hover:text-navy-300">
-            Jolpica-F1
-          </a>{" "}
-          and{" "}
-          <a href="https://openf1.org" className="underline hover:text-navy-300">
-            OpenF1
-          </a>
-          .
-        </p>
-      </footer>
+      <SiteNotice className="mt-auto px-3 pt-6" />
     </aside>
+  );
+}
+
+/** Phones and tablets: slim top bar with the logo and the current page's name. */
+export function MobileHeader() {
+  const isActive = useIsActive();
+  const current = navItems.find((item) => isActive(item.href));
+
+  return (
+    <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-navy-800 bg-navy-975/90 px-4 py-3 backdrop-blur lg:hidden">
+      <Link href="/" className="flex items-center gap-2.5">
+        <Logo className="h-8 w-8 shrink-0" />
+        <span className="text-base font-semibold tracking-tight text-navy-50">Pitwall</span>
+      </Link>
+      {current && current.href !== "/" && (
+        <span className="ml-auto text-sm font-medium text-navy-300">{current.label}</span>
+      )}
+    </header>
+  );
+}
+
+/** Phones and tablets: bottom tab bar, clear of the home indicator. */
+export function MobileNav() {
+  const isActive = useIsActive();
+
+  return (
+    <nav
+      aria-label="Main"
+      className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-navy-800 bg-navy-975/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+    >
+      {navItems.map((item) => {
+        const active = isActive(item.href);
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={active ? "page" : undefined}
+            className={`flex flex-col items-center gap-1 py-2 text-[11px] font-medium transition-colors ${
+              active ? "text-navy-50" : "text-navy-400 hover:text-navy-100"
+            }`}
+          >
+            <span
+              className={`flex h-7 w-12 items-center justify-center rounded-full ${
+                active ? "bg-navy-800" : ""
+              }`}
+            >
+              {item.icon}
+            </span>
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
   );
 }

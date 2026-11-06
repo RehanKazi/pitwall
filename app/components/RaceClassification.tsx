@@ -15,11 +15,11 @@ function ClassificationTable({ rows }: { rows: ClassifiedRow[] }) {
     <table className="w-full table-fixed border-collapse text-sm">
       {/* Fixed widths; the driver column gets whatever is left. */}
       <colgroup>
-        <col className="w-10" />
+        <col className="w-8 sm:w-10" />
         <col className="w-8" />
         <col />
-        <col className="w-30" />
-        <col className="w-10" />
+        <col className="w-24 sm:w-30" />
+        <col className="w-9 sm:w-10" />
       </colgroup>
       <thead>
         <tr className="text-xs uppercase tracking-wider text-navy-400">
@@ -82,7 +82,7 @@ function ClassificationTable({ rows }: { rows: ClassifiedRow[] }) {
                   <span className={classified ? "text-navy-100" : ""}>{r.name}</span>
                 )}
               </td>
-              <td className="whitespace-nowrap py-2 pr-6 text-right text-xs tabular-nums text-navy-300">
+              <td className="whitespace-nowrap py-2 pr-3 text-right text-xs tabular-nums text-navy-300 sm:pr-6">
                 {r.gap}
               </td>
               <td
@@ -116,7 +116,7 @@ export default function RaceClassification({
   const rows = sprint && showSprint ? sprint : race;
 
   return (
-    <div className="border-t border-navy-800 p-6">
+    <div className="border-t border-navy-800 p-4 sm:p-6">
       <div className="mb-3 flex items-center justify-between gap-3">
         <h3 className="text-xs font-medium uppercase tracking-wider text-navy-400">
           {sprint && showSprint ? "Sprint results" : "Race results"}

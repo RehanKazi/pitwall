@@ -3,11 +3,20 @@
 import Image from "next/image";
 import { useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { EvolutionRound, EvolutionSeries } from "../data/championship";
-import { shortLabel, Swatch, useWidth, type ChampionshipKind } from "./chartParts";
+import {
+  COMPACT_WIDTH,
+  flagAxis,
+  shortLabel,
+  Swatch,
+  useWidth,
+  type ChampionshipKind,
+} from "./chartParts";
 
 // ---- Geometry ----
 
+/** Chart height: shorter on phones so the standings stay close by. */
 const HEIGHT = 520;
+const COMPACT_HEIGHT = 380;
 const M = { top: 16, right: 20, bottom: 44, left: 44 };
 /** How close (px) the pointer must be to a line, at the hovered round, to pick that driver. */
 const PICK_RADIUS = 18;
@@ -46,12 +55,14 @@ export default function PointsEvolutionChart({
   const [pinned, setPinned] = useState<string | null>(null);
   const focus = hoverDriver ?? pinned;
 
-  const plotW = Math.max(200, width - M.left - M.right);
-  const plotH = HEIGHT - M.top - M.bottom;
+  const height = width < COMPACT_WIDTH ? COMPACT_HEIGHT : HEIGHT;
+  const plotW = Math.max(120, width - M.left - M.right);
+  const plotH = height - M.top - M.bottom;
   const { top, ticks } = yTicks(Math.max(...series.map((s) => s.cumulative.at(-1) ?? 0)));
   const step = rounds.length > 1 ? plotW / (rounds.length - 1) : 0;
   const xAt = (i: number) => M.left + i * step;
   const yAt = (v: number) => M.top + plotH - (v / top) * plotH;
+  const flags = flagAxis(step, rounds.length);
 
   const path = (s: EvolutionSeries) =>
     s.cumulative.map((v, i) => `${i ? "L" : "M"}${xAt(i).toFixed(1)},${yAt(v).toFixed(1)}`).join("");
@@ -117,7 +128,7 @@ export default function PointsEvolutionChart({
         aria-label={`${kind === "drivers" ? "Drivers'" : "Constructors'"} championship points after each of ${rounds.length} rounds. Use the arrow keys to step through rounds.`}
         className="relative min-w-0 flex-1 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy-400"
       >
-        <svg width={width} height={HEIGHT} className="block select-none" role="img" aria-hidden>
+        <svg width={width} height={height} className="block select-none" role="img" aria-hidden>
           <defs>
             {/* Dot pattern (in the theme's dither style) for the focused driver's area fill */}
             {focused && (
@@ -222,14 +233,16 @@ export default function PointsEvolutionChart({
           {/* X axis: a flag per round */}
           {rounds.map((r, i) => (
             <g key={r.round} opacity={hoverIndex === null || hoverIndex === i ? 1 : 0.45}>
-              <image
-                href={`/flags/${r.countryCode}.png`}
-                x={xAt(i) - 10}
-                y={M.top + plotH + 14}
-                width={20}
-                height={14}
-                preserveAspectRatio="xMidYMid slice"
-              />
+              {(flags.shown(i) || hoverIndex === i) && (
+                <image
+                  href={`/flags/${r.countryCode}.png`}
+                  x={xAt(i) - flags.w / 2}
+                  y={M.top + plotH + 14}
+                  width={flags.w}
+                  height={flags.h}
+                  preserveAspectRatio="xMidYMid slice"
+                />
+              )}
               {r.sprint && (
                 <circle cx={xAt(i)} cy={M.top + plotH + 36} r={2} fill="var(--color-navy-300)" />
               )}
@@ -244,7 +257,9 @@ export default function PointsEvolutionChart({
             height={M.top + plotH + 8}
             fill="transparent"
             onPointerMove={onMove}
-            onPointerLeave={clearHover}
+            // Touch: a tap picks the round and it stays until you tap elsewhere.
+            onPointerDown={onMove}
+            onPointerLeave={(e) => e.pointerType !== "touch" && clearHover()}
             onClick={() => hoverDriver && setPinned((p) => (p === hoverDriver ? null : hoverDriver))}
             className={hoverDriver ? "cursor-pointer" : "cursor-crosshair"}
           />
@@ -285,7 +300,7 @@ export default function PointsEvolutionChart({
           )}
         </div>
         {/* Columns fill top-down so the ranking reads 1, 2, 3… down each column. */}
-        <ol className="columns-2 gap-x-4 sm:columns-3 xl:columns-1">
+        <ol className="columns-1 gap-x-4 sm:columns-2 md:columns-3 xl:columns-1">
           {tableRows.map((s, i) => {
             const active = focus === s.name;
             const gained =

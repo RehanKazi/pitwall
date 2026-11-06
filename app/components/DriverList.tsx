@@ -16,9 +16,11 @@ import DriverCard from "./DriverCard";
 export default function DriverList({
   drivers,
   profiles,
+  asOf,
 }: {
   drivers: DriverStanding[];
   profiles: Record<string, DriverProfile>;
+  asOf?: string;
 }) {
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
 
@@ -68,6 +70,7 @@ export default function DriverList({
               expanded={expanded.has(slug)}
               onToggle={() => toggle(slug)}
               eager={i < 2}
+              asOf={asOf}
             />
           </li>
         );

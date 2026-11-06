@@ -71,6 +71,19 @@ export const sessionMinutes: Record<SessionName, number> = {
 };
 
 /**
+ * When a race weekend is over: its last session's end, or (for rounds stored
+ * without session times) the day after its final day. The "current" race —
+ * shown first on the home page, scrolled to on the schedule — is the first
+ * one whose weekend isn't over yet.
+ */
+export function raceEndMs(race: RaceWeekend): number {
+  const last = race.sessions.at(-1);
+  return last
+    ? new Date(last.start).getTime() + sessionMinutes[last.name] * 60_000
+    : new Date(`${race.end}T00:00:00Z`).getTime() + 24 * 3600_000;
+}
+
+/**
  * The full 2026 calendar: 23 rounds. (The Saudi Arabian GP was cancelled and
  * the Bahrain GP moved to Sepang, Malaysia, because of the Iran war.)
  * Calendar: Wikipedia's 2026 season page. Lap counts are the
