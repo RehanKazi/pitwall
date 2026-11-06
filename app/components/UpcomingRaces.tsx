@@ -236,7 +236,7 @@ function RacePreview({
   );
 }
 
-/** Scroll arrow at either end of the race strip (for mouse users without a trackpad). */
+/** Scroll arrow at either end of the race strip (for mouse users without a trackpad). Hidden on phones and tablets, where you swipe. */
 function ScrollArrow({
   direction,
   disabled,
@@ -247,7 +247,7 @@ function ScrollArrow({
   onClick: () => void;
 }) {
   return (
-    <div className="flex shrink-0 items-center self-stretch border-b border-navy-800 px-1">
+    <div className="hidden shrink-0 items-center self-stretch border-b border-navy-800 px-1 lg:flex">
       <button
         type="button"
         onClick={onClick}
@@ -361,7 +361,8 @@ export default function UpcomingRaces({ races }: { races: RaceWithTrack[] }) {
         <div
           ref={scrollerRef}
           onScroll={updateEdges}
-          className="min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          // Swiping settles each race tab at the left edge on touch layouts.
+          className="min-w-0 flex-1 snap-x snap-proximity overflow-x-auto overscroll-x-contain [scrollbar-width:none] lg:snap-none [&::-webkit-scrollbar]:hidden"
         >
           {/* The ::after line is the panel's top edge; the selected tab sits above it. */}
           <div
@@ -381,7 +382,7 @@ export default function UpcomingRaces({ races }: { races: RaceWithTrack[] }) {
                   aria-selected={isSelected}
                   aria-controls="race-preview"
                   onClick={() => setSelectedRound(race.round)}
-                  className={`flex w-44 shrink-0 items-center gap-2.5 rounded-t-xl border px-3 py-2.5 text-left transition-colors ${
+                  className={`flex w-44 shrink-0 snap-start items-center gap-2.5 rounded-t-xl border px-3 py-2.5 text-left transition-colors ${
                     isSelected
                       ? "dither-panel relative z-10 border-navy-800 border-b-transparent"
                       : // Translucent backing keeps the text readable over the background glow.

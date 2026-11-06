@@ -1,8 +1,9 @@
 import type { ResultsRow } from "./components/ResultsTable";
 import PageHeader from "./components/PageHeader";
-import StandingsPanel from "./components/StandingsPanel";
+import LastRaceDrawer from "./components/LastRaceDrawer";
+import LastRacePanel from "./components/LastRacePanel";
 import UpcomingRaces from "./components/UpcomingRaces";
-import { buildPointsEvolution, type EvolutionSeries } from "./data/championship";
+import { buildPointsEvolution } from "./data/championship";
 import { driverSlug } from "./data/driverProfiles";
 import { loadTrack } from "./data/tracks";
 import { driverStandings, teams } from "./data/standings";
@@ -14,40 +15,9 @@ const onGrid = new Set(driverStandings.map((d) => d.name));
 const driverHref = (name: string) =>
   onGrid.has(name) ? `/drivers#${driverSlug(name)}` : undefined;
 
-/** Standings rows in championship order (ties already split by countback). */
-function toStandingsRows(series: EvolutionSeries[]): ResultsRow[] {
-  const leader = series[0]?.cumulative.at(-1) ?? 0;
-  return series.map((s, i) => {
-    const points = s.cumulative.at(-1) ?? 0;
-    return {
-      position: s.ranks.at(-1) ?? i + 1,
-      name: s.name,
-      team: teams[s.team],
-      value: String(points),
-      sub: i === 0 ? undefined : String(points - leader),
-    };
-  });
-}
-
-// Max points a driver can still score: 25 per race not yet run (no sprints
-// remain this season, and there's no fastest-lap point). Anyone further
-// behind the leader than that can no longer win the title.
-const POINTS_PER_RACE = 25;
-
 export default async function Home() {
   const season = await getSeason({ weekends: true });
-  const { rounds, drivers: driverSeries, constructors: teamSeries } =
-    buildPointsEvolution(season);
-
-  const pointsAvailable =
-    season.filter((r) => !r.result).length * POINTS_PER_RACE;
-  const leaderPoints = driverSeries[0]?.cumulative.at(-1) ?? 0;
-  const drivers = toStandingsRows(driverSeries).map((row) => ({
-    ...row,
-    muted: leaderPoints - Number(row.value) > pointsAvailable,
-    href: driverHref(row.name),
-  }));
-  const constructors = toStandingsRows(teamSeries);
+  const { rounds, drivers: driverSeries } = buildPointsEvolution(season);
 
   // Last race: its classification, with each driver's championship move.
   const last = season.find((r) => r.round === rounds.at(-1)?.round);
@@ -70,13 +40,15 @@ export default async function Home() {
     };
   });
 
+  const lastName = last?.name ?? "No races yet";
+
   const racesWithTracks = season.map((race) => ({
     ...race,
     track: loadTrack(race.trackImage),
   }));
 
   return (
-    // Standings sit beside the races from xl up; below that they stack underneath.
+    // The last race sits beside the races from xl up; below that it's in a slide-out drawer.
     <div className="flex min-w-0 flex-1 flex-col lg:overflow-y-auto xl:flex-row xl:overflow-hidden">
       <main className="flex min-w-0 flex-1 flex-col xl:overflow-y-auto">
         <PageHeader title="Home" />
@@ -84,14 +56,10 @@ export default async function Home() {
           <UpcomingRaces races={racesWithTracks} />
         </div>
       </main>
-      <aside className="shrink-0 border-t border-navy-800 dither-panel xl:w-96 xl:overflow-y-auto xl:border-l xl:border-t-0">
-        <StandingsPanel
-          constructors={constructors}
-          drivers={drivers}
-          driversNote={`Greyed out: can no longer win the title (${pointsAvailable} pts left to play for)`}
-          lastRace={{ name: last?.name ?? "No races yet", rows: lastRaceRows }}
-        />
+      <aside className="hidden w-96 shrink-0 overflow-y-auto border-l border-navy-800 dither-panel xl:block">
+        <LastRacePanel name={lastName} rows={lastRaceRows} />
       </aside>
+      <LastRaceDrawer name={lastName} rows={lastRaceRows} />
     </div>
   );
 }
